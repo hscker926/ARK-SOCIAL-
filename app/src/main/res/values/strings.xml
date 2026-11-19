@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ARK SOCIAL</string>
+    <string name="tagline">Share moments that resonate.</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="sign_in">Sign In</string>
+    <string name="create_account">Create Account</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_create">Create</string>
+    <string name="nav_reels">Reels</string>
+    <string name="nav_profile">Profile</string>
+    <string name="empty_feed_title">Your feed is ready</string>
+    <string name="empty_feed_subtitle">Follow creators or share your first moment to light up your feed.</string>
+    <string name="logout">Log Out</string>
+</resources>

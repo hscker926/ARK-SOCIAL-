@@ -1,0 +1,6 @@
+{
+  "name": "ARK SOCIAL",
+  "description": "A modern native Android social media application with home feed, stories, reels, explore, and user profiles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

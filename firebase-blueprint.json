@@ -1,0 +1,258 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Public creator profile for ARK SOCIAL without PII.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "displayName": { "type": "string" },
+        "bio": { "type": "string" },
+        "avatarKey": { "type": "string" },
+        "website": { "type": "string" },
+        "discoverable": { "type": "boolean" },
+        "postsCount": { "type": "integer" },
+        "followersCount": { "type": "integer" },
+        "followingCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId",
+        "username",
+        "displayName",
+        "discoverable",
+        "postsCount",
+        "followersCount",
+        "followingCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "PrivateAccountSettings": {
+      "title": "PrivateAccountSettings",
+      "description": "Owner-only private PII and notification/privacy settings.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "privateAccount": { "type": "boolean" },
+        "pushLikes": { "type": "boolean" },
+        "pushComments": { "type": "boolean" },
+        "pushFollows": { "type": "boolean" },
+        "showActivityStatus": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId",
+        "privateAccount",
+        "pushLikes",
+        "pushComments",
+        "pushFollows",
+        "showActivityStatus",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "Photo or Reel post shared on ARK SOCIAL.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string" },
+        "authorUsername": { "type": "string" },
+        "authorDisplayName": { "type": "string" },
+        "authorAvatarKey": { "type": "string" },
+        "caption": { "type": "string" },
+        "mediaType": { "type": "string", "enum": ["photo", "reel"] },
+        "mediaKey": { "type": "string" },
+        "location": { "type": "string" },
+        "visibility": { "type": "string", "enum": ["public", "private"] },
+        "likesCount": { "type": "integer" },
+        "commentsCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "authorId",
+        "authorUsername",
+        "authorDisplayName",
+        "caption",
+        "mediaType",
+        "mediaKey",
+        "visibility",
+        "likesCount",
+        "commentsCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Comment on a post.",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string" },
+        "postVisibility": { "type": "string", "enum": ["public", "private"] },
+        "authorId": { "type": "string" },
+        "authorUsername": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "postId",
+        "postVisibility",
+        "authorId",
+        "authorUsername",
+        "text",
+        "createdAt"
+      ]
+    },
+    "LikedPost": {
+      "title": "LikedPost",
+      "description": "User-scoped record of a liked post.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "postId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "postId", "createdAt"]
+    },
+    "SavedPost": {
+      "title": "SavedPost",
+      "description": "User-scoped bookmarked post snapshot.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "postId": { "type": "string" },
+        "authorUsername": { "type": "string" },
+        "caption": { "type": "string" },
+        "mediaKey": { "type": "string" },
+        "mediaType": { "type": "string", "enum": ["photo", "reel"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "postId", "authorUsername", "caption", "mediaKey", "mediaType", "createdAt"]
+    },
+    "FollowingRecord": {
+      "title": "FollowingRecord",
+      "description": "User-scoped following relationship.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "targetUserId": { "type": "string" },
+        "targetUsername": { "type": "string" },
+        "targetDisplayName": { "type": "string" },
+        "targetAvatarKey": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "targetUserId", "targetUsername", "targetDisplayName", "createdAt"]
+    },
+    "Story": {
+      "title": "Story",
+      "description": "Ephemeral visual story highlight.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string" },
+        "authorUsername": { "type": "string" },
+        "authorAvatarKey": { "type": "string" },
+        "mediaKey": { "type": "string" },
+        "caption": { "type": "string" },
+        "visibility": { "type": "string", "enum": ["public"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["authorId", "authorUsername", "mediaKey", "caption", "visibility", "createdAt"]
+    },
+    "AppNotification": {
+      "title": "AppNotification",
+      "description": "User-scoped activity notification.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "actorId": { "type": "string" },
+        "actorUsername": { "type": "string" },
+        "type": { "type": "string", "enum": ["like", "comment", "follow", "welcome"] },
+        "message": { "type": "string" },
+        "postId": { "type": "string" },
+        "unread": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "actorId", "actorUsername", "type", "message", "unread", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct message thread between two users.",
+      "type": "object",
+      "properties": {
+        "participantIds": { "type": "array" },
+        "participantLabel": { "type": "string" },
+        "lastMessage": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["participantIds", "participantLabel", "lastMessage", "createdAt", "updatedAt"]
+    },
+    "DirectMessage": {
+      "title": "DirectMessage",
+      "description": "Message inside a direct conversation.",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string" },
+        "participantIds": { "type": "array" },
+        "senderId": { "type": "string" },
+        "senderUsername": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["conversationId", "participantIds", "senderId", "senderUsername", "text", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Public creator profiles"
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/PrivateAccountSettings" },
+      "description": "Private PII and settings isolated to owner"
+    },
+    "/users/{userId}/likedPosts/{postId}": {
+      "schema": { "$ref": "#/entities/LikedPost" },
+      "description": "Posts liked by the user"
+    },
+    "/users/{userId}/savedPosts/{postId}": {
+      "schema": { "$ref": "#/entities/SavedPost" },
+      "description": "Posts saved by the user"
+    },
+    "/users/{userId}/following/{targetUserId}": {
+      "schema": { "$ref": "#/entities/FollowingRecord" },
+      "description": "Creators followed by the user"
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/AppNotification" },
+      "description": "In-app notifications for the user"
+    },
+    "/posts/{postId}": {
+      "schema": { "$ref": "#/entities/Post" },
+      "description": "Feed posts and reels"
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Comments on a post"
+    },
+    "/stories/{storyId}": {
+      "schema": { "$ref": "#/entities/Story" },
+      "description": "Public creator stories"
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "Direct message threads"
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/DirectMessage" },
+      "description": "Messages inside a direct message thread"
+    }
+  }
+}
