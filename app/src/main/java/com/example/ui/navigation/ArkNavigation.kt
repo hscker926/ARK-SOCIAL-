@@ -234,7 +234,7 @@ private fun AuthenticatedAppShell(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val topLevelRoutes = remember { bottomNavItems.map { it.route }.toSet() }
+    val topLevelRoutes = remember { com.example.mainBottomTabs.map { it.route }.toSet() }
     val showBottomNav = currentRoute in topLevelRoutes
 
     var createInitialMode by remember { mutableStateOf("photo") }
@@ -306,39 +306,14 @@ private fun AuthenticatedAppShell(
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val useRail = maxWidth >= 600.dp
 
-        Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            bottomBar = {
-                if (showBottomNav && !useRail) {
-                    NavigationBar(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier.navigationBarsPadding()
-                    ) {
-                        bottomNavItems.forEach { item ->
-                            val selected = currentRoute == item.route
-                            NavigationBarItem(
-                                selected = selected,
-                                onClick = { navigateTab(item.route) },
-                                icon = {
-                                    Icon(
-                                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                        contentDescription = item.label
-                                    )
-                                },
-                                label = { Text(item.label) },
-                                alwaysShowLabel = true,
-                                modifier = Modifier.testTag(item.testTag)
-                            )
-                        }
-                    }
-                }
-            }
-        ) { innerPadding ->
+        com.example.MainBottomNavScaffold(
+            currentRoute = currentRoute,
+            showBottomBar = showBottomNav && !useRail,
+            snackbarHostState = snackbarHostState,
+            onTabSelected = navigateTab
+        ) { scaffoldModifier ->
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+                modifier = scaffoldModifier.fillMaxSize()
             ) {
                 if (showBottomNav && useRail) {
                     NavigationRail(

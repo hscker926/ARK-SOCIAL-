@@ -1,5 +1,11 @@
 package com.example.ui.screens
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +35,6 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,14 +52,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.data.model.CuratedFeedProvider
 import com.example.data.model.Post
 import com.example.data.model.Story
 import com.example.data.model.UiState
@@ -64,6 +73,7 @@ import com.example.ui.components.ArkMediaImage
 import com.example.ui.components.EmptyStateCard
 import com.example.ui.components.PostCard
 import com.example.ui.theme.ArkBrandGradient
+import com.example.ui.theme.ArkSocialTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -147,8 +157,29 @@ fun HomeFeedScreen(
 
         when (feedState) {
             is UiState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .widthIn(max = 640.dp)
+                            .fillMaxSize()
+                            .testTag("home_feed_loading_list"),
+                        contentPadding = PaddingValues(bottom = 24.dp)
+                    ) {
+                        item(key = "stories_row_loading") {
+                            StoriesStrip(
+                                currentUserProfile = currentUserProfile,
+                                stories = stories,
+                                onAddStoryClick = onAddStoryClick,
+                                onStoryClick = { activeStory = it }
+                            )
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        }
+                        items(3) { index ->
+                            FeedPostPlaceholder(
+                                modifier = Modifier.testTag("post_placeholder_$index")
+                            )
+                        }
+                    }
                 }
             }
             is UiState.Error -> {
@@ -419,3 +450,193 @@ private fun StoryViewerDialog(
         }
     }
 }
+
+@Composable
+fun FeedPostPlaceholder(
+    modifier: Modifier = Modifier
+) {
+    val shimmerBrush = rememberShimmerBrush()
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+    ) {
+        // Author header placeholder
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(shimmerBrush)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Box(
+                    modifier = Modifier
+                        .width(128.dp)
+                        .height(12.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(shimmerBrush)
+                )
+                Box(
+                    modifier = Modifier
+                        .width(84.dp)
+                        .height(10.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(shimmerBrush)
+                )
+            }
+        }
+
+        // Media card placeholder
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .aspectRatio(1.05f)
+                .clip(RoundedCornerShape(20.dp))
+                .background(shimmerBrush)
+        )
+
+        // Actions & caption lines placeholder
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            repeat(3) {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(shimmerBrush)
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(shimmerBrush)
+            )
+        }
+
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(90.dp)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(shimmerBrush)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.88f)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(shimmerBrush)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.55f)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(shimmerBrush)
+            )
+        }
+    }
+}
+
+@Composable
+private fun rememberShimmerBrush(): Brush {
+    val base = MaterialTheme.colorScheme.surfaceVariant
+    val highlight = MaterialTheme.colorScheme.surfaceContainer
+    val transition = rememberInfiniteTransition(label = "postShimmer")
+    val translateAnim by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 900f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmerOffset"
+    )
+    return Brush.linearGradient(
+        colors = listOf(base, highlight, base),
+        start = Offset(translateAnim - 300f, 0f),
+        end = Offset(translateAnim, 300f)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeFeedScreenPreview() {
+    ArkSocialTheme(darkTheme = false) {
+        HomeFeedScreen(
+            currentUserProfile = UserProfile(
+                userId = "preview_user",
+                username = "ark.creator",
+                displayName = "ARK Creator"
+            ),
+            feedState = UiState.Success(CuratedFeedProvider.showcasePosts),
+            stories = CuratedFeedProvider.showcaseStories,
+            likedPostIds = setOf("showcase_post_1"),
+            savedPostIds = emptySet(),
+            followingUserIds = setOf("creator_maya_lin"),
+            unreadNotificationsCount = 2,
+            onOpenNotifications = {},
+            onOpenMessages = {},
+            onAddStoryClick = {},
+            onLikeToggle = {},
+            onDoubleTapLike = {},
+            onCommentClick = {},
+            onShareClick = {},
+            onSaveToggle = {},
+            onFollowAuthor = {},
+            onAuthorClick = {},
+            onCreateFirstPost = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeFeedLoadingPlaceholderPreview() {
+    ArkSocialTheme(darkTheme = false) {
+        HomeFeedScreen(
+            currentUserProfile = UserProfile(
+                userId = "preview_user",
+                username = "ark.creator",
+                displayName = "ARK Creator"
+            ),
+            feedState = UiState.Loading,
+            stories = CuratedFeedProvider.showcaseStories,
+            likedPostIds = emptySet(),
+            savedPostIds = emptySet(),
+            followingUserIds = emptySet(),
+            unreadNotificationsCount = 0,
+            onOpenNotifications = {},
+            onOpenMessages = {},
+            onAddStoryClick = {},
+            onLikeToggle = {},
+            onDoubleTapLike = {},
+            onCommentClick = {},
+            onShareClick = {},
+            onSaveToggle = {},
+            onFollowAuthor = {},
+            onAuthorClick = {},
+            onCreateFirstPost = {}
+        )
+    }
+}
+
